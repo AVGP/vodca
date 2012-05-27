@@ -1,0 +1,16 @@
+#!/usr/bin/expect
+
+set timeout 20
+set password admin
+set name localhost
+set port 4212
+
+set vodname [lindex $argv 0]
+
+spawn telnet $name $port
+expect "Password:"
+send "$password\r\n"
+expect ">"
+send "del $vodname\r\n"
+expect ">"
+send "quit\r\n"
