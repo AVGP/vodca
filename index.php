@@ -1,6 +1,7 @@
 <?php
 
 require_once('lib/limonade.php');
+require_once('config.inc.php');
 
 function configure()
 {
@@ -30,11 +31,11 @@ dispatch('/streams/search/*', function() {
 });
 
 dispatch('/streams/add/:action/:path', function () {
-    if((params('action') != 'use') || (strpos(realpath(params('path')), getcwd().'/media') === 0)) {
-        if(strpos(realpath(params('path')), getcwd().'/media') != 0) set('path',''); //Invalid path traversal!
+    if((params('action') != 'use') || (strpos(realpath(params('path')), MEDIADIR) === 0)) {
+        if(strpos(realpath(params('path')), MEDIADIR) != 0) set('path',''); //Invalid path traversal!
         else set_or_default('path', trim(params('path'),'/'), '');
         
-        set('files', array_slice(scandir('media/admin/' . params('path')),2));
+        set('files', array_slice(scandir(MEDIADIR  . '/' . params('path')),2));
     }
     else {
         set('addFile', params('path'));
@@ -44,7 +45,7 @@ dispatch('/streams/add/:action/:path', function () {
 });
 
 dispatch_post('/streams/add/use/*', function() {
-    shell_exec('scripts/add_vod.expect ' . escapeshellcmd($_POST['name']) . ' ' . escapeshellcmd(realpath('media/admin/'.$_POST['file'])) );
+    shell_exec('scripts/add_vod.expect ' . escapeshellcmd($_POST['name']) . ' ' . escapeshellcmd(realpath(MEDIADIR . '/'.$_POST['file'])) );
     return redirect_to('streams');
 });
 
