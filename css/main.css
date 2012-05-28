@@ -3,6 +3,14 @@ html,body {
     height: 100%;
 }
 
+a, a:visited {
+    color: #08a;
+}
+
+a:hover {
+    color: #0cd;
+}
+
 ul {
     list-style: none;
     margin: 20px 0px 0px;
