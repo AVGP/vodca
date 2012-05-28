@@ -1,9 +1,8 @@
 <h2>Available Streams</h2>
 <div>
     <form style="float:right">
-        <label for="search">Search:</label>
+        <label for="search" style="display: inline">Search:</label>
         <input id="search" />
-        <button type="submit" class="btn btn-primary">Go</button>
     </form>
     <a href="/streams/add" class="btn">Add new stream</a>
 </div>
@@ -11,6 +10,7 @@
     <?php foreach($streams as $stream): ?>
     <li>
         <a href="rtsp://<?php echo $_SERVER['HTTP_HOST']; ?>:554/<?php echo $stream; ?>" target="_blank"><?php echo $stream; ?></a>&nbsp;&nbsp;
+        <a href="/streams/watch/<?php echo $stream; ?>" target="_blank">Watch in your browser</a>&nbsp;&nbsp;
         <a href="/streams/remove/<?php echo $stream; ?>" onclick="if(!window.confirm('Really delete this stream?')) return false;">[Delete]</a>
     </li>
     <?php endforeach; ?>
