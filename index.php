@@ -49,18 +49,46 @@ dispatch('/streams/add/:action/:path', function () {
 });
 
 dispatch_post('/streams/add/use/*', function() {
-    shell_exec('scripts/add_vod.expect ' . escapeshellcmd($_POST['name']) . ' ' . escapeshellcmd(realpath('media/admin/'.$_POST['file'])) );
+    $name = escapeshellcmd($_POST['name']);
+    $source = escapeshellcmd(realpath('media/admin/'.$_POST['file']));
+    addStream($name, $source);
     return redirect_to('streams');
 });
 
 dispatch('/streams/remove/:name', function() {
     shell_exec('scripts/remove_vod.expect ' . escapeshellcmd(params('name')));    
+    $db = new SQlite3('streams.db');
+    $db->exec('DELETE FROM streams WHERE name = "'. $db->escapeString(params('name')) . '"');
+    $db->close();
+    return redirect_to('streams');
+});
+
+dispatch('/streams/sync', function() {
+    $db = new SQLite3('streams.db');
+    $dbStreamsResult = $db->query('SELECT * FROM streams');
+    $dbStreams = array();
+    while(($row = $dbStreamsResult->fetchArray()) !== false) $dbStreams[$row['name']] = $row;    
+    $existingStreams = getEnabledVODStreams(getAllMedia());
+    
+    //Sync DB -> Streams
+    foreach($dbStreams as $stream) {
+        if(!in_array($stream['name'], $existingStreams)) addStream($stream['name'], $stream['source']);
+    }
+
+    $db->close();
     return redirect_to('streams');
 });
 
 run();
 
 //Auxiliary functions
+
+function addStream($name, $source) {
+    shell_exec('scripts/add_vod.expect ' . $name . ' ' . $source );
+    $db = new SQlite3('streams.db');
+    $db->exec('INSERT INTO streams(name, source) VALUES("'. $db->escapeString($name) . '","' . $db->escapeString($source) . '")');
+    $db->close();    
+}
 
 function getEnabledVODStreams($media, $searchTerm = '') {
     $result = array();

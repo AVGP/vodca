@@ -5,6 +5,7 @@
         <input id="search" />
     </form>
     <a href="/streams/add" class="btn">Add new stream</a>
+    <a href="/streams/sync" class="btn">Sync with database</a>
 </div>
 <ul id="streams">
     <?php foreach($streams as $stream): ?>
