@@ -2,7 +2,7 @@
 
 require_once('lib/limonade.php');
 
-function configure()
+function configure(Security)
 {
   option('env', ENV_DEVELOPMENT);
 }
@@ -14,7 +14,7 @@ function before() {
 dispatch('/', function() { return redirect_to('streams'); });
 
 dispatch('/streams', function() {         
-    //Filter for enabled VOD streams
+    //Filter for enabled VOD streams gpg
     $streams = getEnabledVODStreams(getAllMedia());
     set('streams', $streams);
     return render('templates/streams.html.php');
